@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 import TypingApi from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
+  const navigate = useNavigate();
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const user = await TypingApi.login(email, password);
     localStorage.setItem("userToken", user.token);
+    localStorage.setItem("username", user.username);
+    navigate("/");
   }
 
   return (

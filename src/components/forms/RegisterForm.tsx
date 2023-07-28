@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import TypingApi from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -7,6 +8,8 @@ const RegisterForm: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>("");
   const [error, setError] = useState<string>("");
+
+  const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -17,8 +20,11 @@ const RegisterForm: React.FC = () => {
     }
 
     const user = await TypingApi.register(email, username, password);
-    console.log(user, "user in register form");
+
     localStorage.setItem("userToken", user.token);
+    localStorage.setItem("username", user.username);
+
+    navigate("/");
   }
 
   return (

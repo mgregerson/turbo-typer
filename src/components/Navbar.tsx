@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const navigation = [
   { name: "Homepage", href: "/", current: true },
-  { name: "New Game", href: "/game", current: false },
+  { name: "New Game", href: "/newgame", current: false },
   { name: "Leaderboard", href: "/leaderboard", current: false },
 ];
 
@@ -26,7 +26,6 @@ function getUser() {
 export default function Navbar() {
   const user = getUser();
   const navigate = useNavigate();
-  console.log(user, "user in navbar");
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
