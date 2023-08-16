@@ -1,5 +1,5 @@
 import { Card } from "@mui/material";
-import { useContext, useState, useEffect, useRef } from "react";
+import { useContext, useState, useEffect } from "react";
 import { StoryContext } from "../context/StoryContext.tsx";
 import { ResultsContext } from "../context/ResultsContext.tsx";
 import { useNavigate } from "react-router-dom";
@@ -60,12 +60,18 @@ export function TypingTest() {
         wordsPerMinute = 0;
       }
 
+      const totalCharacters = wordsPerMinute + mistakes;
+
+      const accuracy = `${Math.round((1 - mistakes / totalCharacters) * 100)}%`;
+
       setResults({
         title: story.title,
         mistakes,
         words,
         time: story.time,
         wordsPerMinute,
+        accuracy,
+        difficulty: story.difficulty,
       });
 
       const postScore = async () => {
