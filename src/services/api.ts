@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Score } from "../types/types";
+import { Score, TypingTest } from "../types/types";
 
 const BASE_URL = "http://localhost:8080";
 
@@ -73,10 +73,20 @@ class TypingApi {
     return res;
   }
 
+  static async createTypingTest(data: TypingTest) {
+    const { title, text, difficulty, createdBy } = data;
+
+    const res = await this.request<any>("typingtests/add", "post", {
+      title,
+      text,
+      difficulty,
+      createdBy,
+    });
+    return res;
+  }
+
   static async createNewScore(data: Score) {
     const { user, typingTest, wordsPerMinute, time, mistakes } = data;
-
-    console.log(data, "data in createNewScore");
 
     const res = await this.request<any>(`scores`, "post", {
       user,
@@ -85,7 +95,7 @@ class TypingApi {
       time,
       mistakes,
     });
-    console.log(res);
+
     return res;
   }
 }
