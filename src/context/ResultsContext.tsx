@@ -6,6 +6,8 @@ export type ResultsType = {
   time: string;
   words: number;
   wordsPerMinute: number;
+  accuracy: string;
+  difficulty: string;
 };
 
 type ResultsContextType = {
