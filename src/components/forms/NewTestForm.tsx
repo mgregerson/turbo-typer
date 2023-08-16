@@ -8,6 +8,7 @@ export type StoryType = {
   title: string;
   text: string;
   difficulty: string;
+  time: string;
 };
 
 const NewTestForm: React.FC = () => {
@@ -30,7 +31,8 @@ const NewTestForm: React.FC = () => {
     const story: StoryType = await TypingApi.getRandomTypingTestByDifficulty(
       difficulty
     );
-    setStory(story); // Save the story data to the context
+    story.time = time;
+    setStory(story);
     navigate(`/typingtest/${story._id}`);
   }
 
@@ -71,6 +73,7 @@ const NewTestForm: React.FC = () => {
             onChange={(e) => setTime(e.target.value)}
           >
             <option value="">Select a time</option>
+            <option value="0">0 minutes</option>
             <option value="1">1 minutes</option>
             <option value="2">2 minutes</option>
             <option value="3">3 minutes</option>
