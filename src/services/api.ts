@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Score } from "../types/types";
 
 const BASE_URL = "http://localhost:8080";
 
@@ -59,7 +60,7 @@ class TypingApi {
       "post",
       data
     );
-    localStorage.setItem("USER-AUTH", res.token); // Store the token in local storage
+    localStorage.setItem("USER-AUTH", res.token);
     return res;
   }
 
@@ -68,6 +69,22 @@ class TypingApi {
       `typingtests/${difficulty}/random`,
       "get"
     );
+    console.log(res);
+    return res;
+  }
+
+  static async createNewScore(data: Score) {
+    const { user, typingTest, wordsPerMinute, time, mistakes } = data;
+
+    console.log(data, "data in createNewScore");
+
+    const res = await this.request<any>(`scores`, "post", {
+      user,
+      typingTest,
+      wordsPerMinute,
+      time,
+      mistakes,
+    });
     console.log(res);
     return res;
   }
