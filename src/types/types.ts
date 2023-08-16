@@ -5,3 +5,10 @@ export type Score = {
   typingTest: string;
   mistakes: number;
 };
+
+export type TypingTest = {
+  title: string;
+  text: string;
+  difficulty: string;
+  createdBy: string;
+};
