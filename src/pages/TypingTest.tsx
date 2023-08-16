@@ -1,9 +1,10 @@
-import { Card, Button } from "@mui/material";
-import { useContext, useState, useEffect } from "react";
+import { Card } from "@mui/material";
+import { useContext, useState, useEffect, useRef } from "react";
 import { StoryContext } from "../context/StoryContext.tsx";
 import { ResultsContext } from "../context/ResultsContext.tsx";
 import { useNavigate } from "react-router-dom";
 import Timer from "../components/Timer/Timer.tsx";
+import { renderStoryText } from "../hooks/RenderStoryText.tsx";
 
 import TypingApi from "../services/api.ts";
 
@@ -15,9 +16,6 @@ export function TypingTest() {
   const [mistakes, setMistakes] = useState(0);
   const [userInput, setUserInput] = useState("");
   const [words, setWords] = useState(0);
-  const [timerExpired, setTimerExpired] = useState(false);
-
-  console.log(timerExpired, "TIMEREXPIRED CHANGED");
 
   useEffect(() => {
     if (story) {
@@ -45,20 +43,9 @@ export function TypingTest() {
     }
   }, [userInput]);
 
-  useEffect(() => {
-    if (story && userInput && !timerExpired) {
-      const timer = setTimeout(() => {
-        setTimerExpired(true);
-      }, parseInt(story.time) * 60 * 1000);
-
-      return () => {
-        clearTimeout(timer);
-      };
-    }
-  }, [story, userInput, timerExpired]);
-
-  useEffect(() => {
-    if (timerExpired && story) {
+  const handleFinishedTest = () => {
+    if (story) {
+      console.log("finished test");
       // Create a POST request to the server to save results of new score
       const getWordsPerMinute = () => {
         const wordsPerMinute = Math.round(
@@ -69,7 +56,7 @@ export function TypingTest() {
 
       let wordsPerMinute = getWordsPerMinute();
 
-      if (wordsPerMinute == -Infinity) {
+      if (wordsPerMinute === -Infinity) {
         wordsPerMinute = 0;
       }
 
@@ -80,8 +67,6 @@ export function TypingTest() {
         time: story.time,
         wordsPerMinute,
       });
-
-      console.log("got here");
 
       const postScore = async () => {
         if (localStorage.getItem("username")) {
@@ -108,32 +93,6 @@ export function TypingTest() {
         },
       });
     }
-  }, [timerExpired]);
-
-  const renderStoryText = () => {
-    if (!story) return null;
-
-    const storyCharacters = story.text.split("");
-    const userInputCharacters = userInput.split("");
-
-    return storyCharacters.map((char, index) => {
-      let textColorClass = "text-gray-300";
-
-      if (userInputCharacters[index] === char) {
-        textColorClass = "text-green-500";
-      } else if (
-        userInputCharacters[index] &&
-        userInputCharacters[index] !== char
-      ) {
-        textColorClass = "text-red-500";
-      }
-
-      return (
-        <span key={index} className={textColorClass}>
-          {char}
-        </span>
-      );
-    });
   };
 
   return (
@@ -150,7 +109,10 @@ export function TypingTest() {
         <div className="w-1/3 text-center">
           <p>Time Remaining</p>
           {story && userInput ? (
-            <Timer minutes={story.time} />
+            <Timer
+              minutes={story.time}
+              handleTimerExpired={handleFinishedTest}
+            />
           ) : (
             <div>{`${story?.time}:00`}</div>
           )}
@@ -161,7 +123,7 @@ export function TypingTest() {
           <div className="w-1/2">
             <p className="text-center font-bold text-lg">{story.title}</p>
             <div className="overflow-auto">
-              <p>{renderStoryText()}</p>
+              <p>{renderStoryText(story.text, userInput)}</p>
             </div>
           </div>
           <div className="w-1/2">
