@@ -1,26 +1,114 @@
 import { Card, Button } from "@mui/material";
 import { useContext, useState, useEffect } from "react";
 import { StoryContext } from "../context/StoryContext.tsx";
+import { ResultsContext } from "../context/ResultsContext.tsx";
+import { useNavigate } from "react-router-dom";
 import Timer from "../components/Timer/Timer.tsx";
+
+import TypingApi from "../services/api.ts";
 
 export function TypingTest() {
   const { story } = useContext(StoryContext);
-
-  console.log(story);
+  const { setResults } = useContext(ResultsContext);
+  const navigate = useNavigate();
 
   const [mistakes, setMistakes] = useState(0);
   const [userInput, setUserInput] = useState("");
-  const [timeRemaining, setTimeRemaining] = useState(`${story?.time}:00`);
+  const [words, setWords] = useState(0);
+  const [timerExpired, setTimerExpired] = useState(false);
+
+  console.log(timerExpired, "TIMEREXPIRED CHANGED");
 
   useEffect(() => {
-    let newMistakes = 0;
-    for (let i = 0; i < userInput.length; i++) {
-      if (userInput[i] !== story?.text[i]) {
-        newMistakes++;
+    if (story) {
+      const storyWords = story.text.split(" ");
+      const inputWords = userInput.split(" ");
+
+      let newMistakes = 0;
+      let numCorrectWords = 0;
+
+      for (let i = 0; i < storyWords.length; i++) {
+        const storyWord = storyWords[i];
+        const inputWord = inputWords[i];
+
+        if (inputWord === storyWord) {
+          // If the words match, it's a correct word
+          numCorrectWords++;
+        } else if (inputWord !== undefined) {
+          // If the user typed a word and it's not a match, it's a mistake
+          newMistakes++;
+        }
       }
+
+      setMistakes(newMistakes);
+      setWords(numCorrectWords);
     }
-    setMistakes(newMistakes);
-  }, [userInput, story?.text]);
+  }, [userInput]);
+
+  useEffect(() => {
+    if (story && userInput && !timerExpired) {
+      const timer = setTimeout(() => {
+        setTimerExpired(true);
+      }, parseInt(story.time) * 60 * 1000);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [story, userInput, timerExpired]);
+
+  useEffect(() => {
+    if (timerExpired && story) {
+      // Create a POST request to the server to save results of new score
+      const getWordsPerMinute = () => {
+        const wordsPerMinute = Math.round(
+          (userInput.length / 5 - mistakes) / parseInt(story.time)
+        );
+        return wordsPerMinute;
+      };
+
+      let wordsPerMinute = getWordsPerMinute();
+
+      if (wordsPerMinute == -Infinity) {
+        wordsPerMinute = 0;
+      }
+
+      setResults({
+        title: story.title,
+        mistakes,
+        words,
+        time: story.time,
+        wordsPerMinute,
+      });
+
+      console.log("got here");
+
+      const postScore = async () => {
+        if (localStorage.getItem("username")) {
+          const data = {
+            user: localStorage.getItem("username"),
+            typingTest: story._id,
+            wordsPerMinute,
+            time: parseInt(story.time),
+            mistakes,
+          };
+          const response = await TypingApi.createNewScore(data);
+          console.log(response, "response in typingTest");
+        }
+      };
+
+      postScore();
+
+      navigate(`/typingtest/${story._id}/results`, {
+        state: {
+          mistakes,
+          words,
+          storyTime: story.time,
+          wordsPerMinute,
+        },
+      });
+    }
+  }, [timerExpired]);
 
   const renderStoryText = () => {
     if (!story) return null;
@@ -57,11 +145,15 @@ export function TypingTest() {
         </div>
         <div className="w-1/3 text-center">
           <p>Words</p>
-          <p>{userInput.split(" ").length}</p>
+          <p>{words}</p>
         </div>
         <div className="w-1/3 text-center">
           <p>Time Remaining</p>
-          {story && <Timer minutes={story.time} />}
+          {story && userInput ? (
+            <Timer minutes={story.time} />
+          ) : (
+            <div>{`${story?.time}:00`}</div>
+          )}
         </div>
       </div>
       {story && (
