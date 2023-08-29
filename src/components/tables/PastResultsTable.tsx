@@ -42,22 +42,22 @@ function createData(
 }
 
 interface ResultsTableProps {
-  results: Results;
+  results: Results[];
 }
 
-export default function ResultsTable({ results }: ResultsTableProps) {
-  const rows = [
-    createData(
-      results.difficulty,
-      results.time,
-      results.wordsPerMinute,
-      results.mistakes,
-      results.accuracy,
-      results.title,
-      results.words,
-      results.totalWordsTyped
-    ),
-  ];
+export default function PastResultsTable({ results }: ResultsTableProps) {
+  const rows = results.map((result) => {
+    return createData(
+      result.difficulty,
+      result.time,
+      result.wordsPerMinute,
+      result.mistakes,
+      result.accuracy,
+      result.title,
+      result.words,
+      result.totalWordsTyped
+    );
+  });
 
   return (
     <TableContainer component={Paper}>
