@@ -42,6 +42,8 @@ class TypingApi {
     }
   }
 
+  // Auth API Calls
+
   static async register(email: string, username: string, password: string) {
     const data = { email, username, password };
     const res: LoginResponse = await this.request<LoginResponse>(
@@ -64,6 +66,8 @@ class TypingApi {
     return res;
   }
 
+  // Typing Tests API Calls
+
   static async getRandomTypingTestByDifficulty(difficulty: string) {
     const res = await this.request<any>(
       `typingtests/${difficulty}/random`,
@@ -85,8 +89,20 @@ class TypingApi {
     return res;
   }
 
+  // Scores API Calls
+
   static async createNewScore(data: Score) {
-    const { user, typingTest, wordsPerMinute, time, mistakes } = data;
+    const {
+      user,
+      typingTest,
+      wordsPerMinute,
+      time,
+      mistakes,
+      difficulty,
+      words,
+      accuracy,
+      totalWordsTyped,
+    } = data;
 
     const res = await this.request<any>(`scores`, "post", {
       user,
@@ -94,8 +110,35 @@ class TypingApi {
       wordsPerMinute,
       time,
       mistakes,
+      difficulty,
+      words,
+      accuracy,
+      totalWordsTyped,
     });
 
+    return res;
+  }
+
+  static async getScoresByTypingTestAndUser(
+    typingTestId: string,
+    userId: string
+  ) {
+    const res = await this.request<any>(
+      `users/${userId}/typingtests/${typingTestId}/scores`,
+      "get"
+    );
+    return res;
+  }
+
+  static async getScoresByUserAndDifficulty(
+    difficulty: string,
+    username: string
+  ) {
+    const res = await this.request<any>(
+      `users/${username}/scores/${difficulty}`,
+      "get"
+    );
+    console.log(res);
     return res;
   }
 }
