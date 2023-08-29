@@ -1,13 +1,16 @@
 import React, { createContext, useState } from "react";
+import { TypingTest } from "../types/types";
 
 export type ResultsType = {
   title: string;
   mistakes: number;
-  time: string;
+  time: number;
   words: number;
   wordsPerMinute: number;
   accuracy: string;
   difficulty: string;
+  totalWordsTyped: number;
+  typingTest?: TypingTest | undefined;
 };
 
 type ResultsContextType = {
