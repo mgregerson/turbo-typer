@@ -30,10 +30,8 @@ export function TypingTest() {
         const inputWord = inputWords[i];
 
         if (inputWord === storyWord) {
-          // If the words match, it's a correct word
           numCorrectWords++;
         } else if (inputWord !== undefined) {
-          // If the user typed a word and it's not a match, it's a mistake
           newMistakes++;
         }
       }
@@ -68,10 +66,11 @@ export function TypingTest() {
         title: story.title,
         mistakes,
         words,
-        time: story.time,
+        time: parseInt(story.time),
         wordsPerMinute,
         accuracy,
         difficulty: story.difficulty,
+        totalWordsTyped: userInput.split(" ").length,
       });
 
       const postScore = async () => {
@@ -82,6 +81,10 @@ export function TypingTest() {
             wordsPerMinute,
             time: parseInt(story.time),
             mistakes,
+            difficulty: story.difficulty,
+            words,
+            accuracy,
+            totalWordsTyped: userInput.split(" ").length,
           };
           const response = await TypingApi.createNewScore(data);
           console.log(response, "response in typingTest");
