@@ -7,25 +7,28 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
-export interface Results {
-  difficulty: string;
-  time: number;
-  wordsPerMinute: number;
-  mistakes: number;
+export interface PastResults {
   accuracy: string;
-  title: string;
-  words: number;
+  date: string;
+  difficulty: string;
+  mistakes: number;
+  time: number;
   totalWordsTyped: number;
-  date?: Date;
+  typingTest: object;
+  user: string;
+  words: number;
+  wordsPerMinute: number;
+  _id: string;
+  __v: number;
 }
 
 function createData(
+  title: string,
   difficulty: string,
   time: number,
   wordsPerMinute: number,
   mistakes: number,
   accuracy: string,
-  title: string,
   words: number,
   totalWordsTyped: number
 ) {
@@ -42,18 +45,19 @@ function createData(
 }
 
 interface ResultsTableProps {
-  results: Results[];
+  results: PastResults[];
 }
 
 export default function PastResultsTable({ results }: ResultsTableProps) {
-  const rows = results.map((result) => {
+  console.log(results, "THEE RESULTTSSSS");
+  const rows = results.map((result: any) => {
     return createData(
+      result.typingTest.title,
       result.difficulty,
       result.time,
       result.wordsPerMinute,
       result.mistakes,
       result.accuracy,
-      result.title,
       result.words,
       result.totalWordsTyped
     );
@@ -74,7 +78,7 @@ export default function PastResultsTable({ results }: ResultsTableProps) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {rows.map((row: any) => (
             <TableRow
               key={row.title}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
