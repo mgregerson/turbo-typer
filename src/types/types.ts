@@ -4,6 +4,11 @@ export type Score = {
   wordsPerMinute: number;
   typingTest: string;
   mistakes: number;
+  difficulty: string;
+  words: number;
+  accuracy: string;
+  totalWordsTyped: number;
+  date?: Date;
 };
 
 export type TypingTest = {
