@@ -1,4 +1,3 @@
-import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -6,61 +5,67 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { v4 as uuidv4 } from "uuid";
+import { TypingTest } from "../../types/types";
 
-export interface PastResults {
+export type User = {
+  email: string;
+  username: string;
+  _id: string;
+};
+
+export interface Results {
   accuracy: string;
-  date: string;
+  date: Date;
   difficulty: string;
   mistakes: number;
   time: number;
   totalWordsTyped: number;
-  typingTest: object;
-  user: string;
   words: number;
   wordsPerMinute: number;
-  _id: string;
-  __v: number;
+  typingTest: TypingTest;
+  user: User;
 }
 
 function createData(
+  username: string,
   title: string,
-  difficulty: string,
-  time: number,
   wordsPerMinute: number,
+  totalWordsTyped: number,
   mistakes: number,
   accuracy: string,
-  words: number,
-  totalWordsTyped: number
+  time: number
 ) {
   return {
-    id: uuidv4(), // Generate a UUID
-    difficulty,
-    time,
+    username,
+    title,
     wordsPerMinute,
+    totalWordsTyped,
     mistakes,
     accuracy,
-    title,
-    words,
-    totalWordsTyped,
+    time,
   };
 }
 
 interface ResultsTableProps {
-  results: PastResults[];
+  results: Results[];
+  difficulty: string;
 }
 
-export default function PastResultsTable({ results }: ResultsTableProps) {
+export default function LeaderboardTable({
+  results,
+  difficulty,
+}: ResultsTableProps) {
+  console.log(results, "here they are");
+
   const rows = results.map((result: any) => {
     return createData(
+      result.user.username,
       result.typingTest.title,
-      result.difficulty,
-      result.time,
       result.wordsPerMinute,
+      result.totalWordsTyped,
       result.mistakes,
       result.accuracy,
-      result.words,
-      result.totalWordsTyped
+      result.time
     );
   });
 
@@ -69,30 +74,33 @@ export default function PastResultsTable({ results }: ResultsTableProps) {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
+            <TableCell colSpan={7} align="center">
+              Difficulty: {difficulty}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>User</TableCell>
             <TableCell>Story</TableCell>
-            <TableCell>Difficulty</TableCell>
-            <TableCell>Time</TableCell>
             <TableCell>Words Per Minute</TableCell>
             <TableCell>Total Words Typed</TableCell>
             <TableCell>Mistakes</TableCell>
             <TableCell>Accuracy</TableCell>
+            <TableCell>Test Length in Minutes</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row: any) => (
+          {rows.map((row) => (
             <TableRow
-              key={row.id}
+              key={row.title}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
-              <TableCell component="th" scope="row">
-                {row.title}
-              </TableCell>
-              <TableCell>{row.difficulty}</TableCell>
-              <TableCell>{row.time}</TableCell>
+              <TableCell>{row.username}</TableCell>
+              <TableCell>{row.title}</TableCell>
               <TableCell>{row.wordsPerMinute}</TableCell>
-              <TableCell>{row.words}</TableCell>
+              <TableCell>{row.totalWordsTyped}</TableCell>
               <TableCell>{row.mistakes}</TableCell>
               <TableCell>{row.accuracy}</TableCell>
+              <TableCell>{row.time}</TableCell>
             </TableRow>
           ))}
         </TableBody>
