@@ -5,6 +5,7 @@ import RegisterForm from "../components/forms/RegisterForm";
 import NewTestForm from "../components/forms/NewTestForm";
 import Results from "../pages/Results";
 import { TypingTest } from "../pages/TypingTest";
+import Leaderboard from "../pages/Leaderboard";
 
 function RoutesList(): JSX.Element {
   return (
@@ -13,7 +14,7 @@ function RoutesList(): JSX.Element {
       <Route path="/newgame" element={<NewTestForm />} />
       <Route path="/typingtest/:id" element={<TypingTest />} />
       <Route path="/typingtest/:id/results" element={<Results />} />
-      <Route path="/leaderboard" element={<App />} />
+      <Route path="/leaderboard" element={<Leaderboard />} />
       <Route path="/about" element={<App />} />
       <Route path="/profile" element={<App />} />
       <Route path="/register" element={<RegisterForm />} />
