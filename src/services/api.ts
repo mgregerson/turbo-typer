@@ -141,6 +141,12 @@ class TypingApi {
     console.log(res);
     return res;
   }
+
+  static async getTopFiveScoresByDifficulty() {
+    const res = await this.request<any>(`leaderboard`, "get");
+    console.log(res);
+    return res;
+  }
 }
 
 export default TypingApi;
